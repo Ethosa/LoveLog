@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="start_dating">Когда вы начали встречаться?</string>
+    <string name="contn">продолжить</string>
+    <string name="day_together">-й день вместе</string>
+    <string name="settings">Настройки</string>
+</resources>

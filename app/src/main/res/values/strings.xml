@@ -1,0 +1,7 @@
+<resources>
+    <string name="app_name" translatable="false">LoveLog</string>
+    <string name="start_dating">When did you start dating?</string>
+    <string name="contn">continue</string>
+    <string name="day_together">days together</string>
+    <string name="settings">Settings</string>
+</resources>
