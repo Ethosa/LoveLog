@@ -47,7 +47,7 @@ fun PasswordScreen(
     var password by remember { mutableStateOf("") }
     val passLength = 4
 
-    val coroutineScope = rememberCoroutineScope()
+    val ctx = LocalContext.current
 
     // Error
     var error by remember { mutableStateOf("") }
@@ -127,21 +127,20 @@ fun PasswordScreen(
             Modifier.alpha(alpha.value),
             contentAlignment = Alignment.Center
         ) {
-            val buttons = listOf("1", "2", "3", "4", "5", "6", "7", "8", "9")
             LazyVerticalGrid(
                 columns = GridCells.Fixed(3),
                 modifier = Modifier.offset(0.dp, 64.dp),
                 verticalArrangement = Arrangement.spacedBy(24.dp)
             ) {
                 // numbers
-                items(buttons) {
+                items(('1'..'9').toList()) {
                     IconButton(onClick = {
                         if (passLength > password.length) {
                             password += it
                             error = ""
                         }
                     }) {
-                        Text(it)
+                        Text(it.toString())
                     }
                 }
                 // Remove last char
@@ -177,8 +176,7 @@ fun PasswordScreen(
                         } else if (isRemember) {
                             // Repeat the password
                             if (pass2rem != password) {
-                                error = "passwords don't match"
-
+                                error = ctx.getString(R.string.pass_dont_match)
                             } else {
                                 preferences.edit()
                                     .putString(Utils.PASSWORD2REM, null)
@@ -189,7 +187,7 @@ fun PasswordScreen(
                         } else if (isClear) {
                             // Clear password
                             if (oldPassword != password)
-                                error = "password isn't correct"
+                                error = ctx.getString(R.string.wrong_pass)
                             preferences.edit()
                                 .putString(Utils.PASSWORD2REM, null)
                                 .putString(Utils.PASSWORD, null)
@@ -197,7 +195,7 @@ fun PasswordScreen(
                             navController.navigateUp()
                         } else if (oldPassword != password) {
                             // Incorrect password
-                            error = "password isn't correct"
+                            error = ctx.getString(R.string.wrong_pass)
                         } else {
                             // Valid password
                             navController.popBackStack()

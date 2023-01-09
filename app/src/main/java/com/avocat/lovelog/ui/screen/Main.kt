@@ -54,6 +54,7 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
     // Animations
     val offsetY = remember { Animatable(256f) }
     val alpha = remember { Animatable(0f) }
+    val modifierAlpha = Modifier.alpha(alpha.value)
 
     LaunchedEffect(key1 = true) {
         offsetY.animateTo(0f, tween(500, 300, EaseOutBack))
@@ -66,6 +67,31 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
     println(years)
     println(months)
     println(days)
+
+    val i = listOf(
+        EventData("100 days", 100),
+        EventData("200 days", 200),
+        EventData("300 days", 300),
+        EventData("1 year", 365),
+        EventData("400 days", 400),
+        EventData("500 days", 500),
+        EventData("600 days", 600),
+        EventData("2 years", 730),
+        EventData("1000 days", 1000),
+        EventData("3 years", 1095),
+        EventData("4 years", 1460),
+        EventData("5 years", 1825),
+        EventData("6 years",  2190),
+    )
+    // Visible item calculating
+    var nextIndex = 0
+    while (nextIndex < i.size-1 && i[nextIndex+1].daysCount <= allDays) {
+        nextIndex++
+    }
+    val lazyState = rememberLazyListState(nextIndex)
+
+    val (leftPartner, rightPartner) = Utils.getCouple(preferences)
+    val (leftPhoto, rightPhoto) = Utils.getCouplePhotos(preferences)
 
     // Main content
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
@@ -81,20 +107,16 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
         )
         // Background
         Surface(
-            Modifier
+            modifierAlpha
                 .fillMaxSize()
-                .offset(0.dp, (80f + offsetY.value).dp)
-                .alpha(alpha.value),
+                .offset(0.dp, (80f + offsetY.value).dp),
             shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
             color = MaterialTheme.colorScheme.background
         ) { }
         Column(
-            Modifier
+            modifierAlpha
                 .offset(0.dp, (36f + offsetY.value).dp)
-                .alpha(alpha.value)
         ) {
-            val (leftPartner, rightPartner) = Utils.getCouple(preferences)
-            val (leftPhoto, rightPhoto) = Utils.getCouplePhotos(preferences)
 
             // Partners and main info
             Row(
@@ -105,15 +127,14 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Avatar(
                         imageBitmap = Utils.uriToImageBitmap(
-                            Uri.parse(leftPhoto), LocalContext.current.applicationContext.contentResolver
+                            Uri.parse(leftPhoto), LocalContext.current.contentResolver
                         )
                     )
                     Text(leftPartner, style = MaterialTheme.typography.bodyMedium)
                 }
                 Column(
-                    Modifier
-                        .offset(0.dp, 24.dp)
-                        .alpha(alpha.value),
+                    modifierAlpha
+                        .offset(0.dp, 24.dp),
                     horizontalAlignment = Alignment.CenterHorizontally,
                     verticalArrangement = Arrangement.Center
                 ) {
@@ -142,7 +163,8 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
                     Avatar(
                         imageBitmap = Utils.uriToImageBitmap(
-                            Uri.parse(rightPhoto), LocalContext.current.applicationContext.contentResolver
+                            Uri.parse(rightPhoto),
+                            LocalContext.current.contentResolver
                         )
                     )
                     Text(rightPartner, style = MaterialTheme.typography.bodyMedium)
@@ -151,23 +173,6 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
 
             // Progress
 
-            // Progress cards
-            val i = listOf(
-                EventData("100 days", 100),
-                EventData("200 days", 200),
-                EventData("300 days", 300),
-                EventData("1 year", 365),
-                EventData("400 days", 400),
-                EventData("500 days", 500),
-                EventData("600 days", 600),
-                EventData("2 years", 730)
-            )
-            // Visible item calculating
-            var nextIndex = 0
-            while (nextIndex < i.size-1 && i[nextIndex+1].daysCount <= allDays) {
-                nextIndex++
-            }
-            val lazyState = rememberLazyListState(nextIndex)
             // Cards
             Column(
                 Modifier
@@ -232,7 +237,9 @@ fun ProgressCard(
     ) {
         val date = SimpleDateFormat("dd.MM.yyyy").parse(coupleDate)!!
         val daysDiff = abs(currentDays - eventData.daysCount)
-        val eventDate = Date(abs(eventData.daysCount.toLong() * 24 * 60 * 60 * 1000) + date.time)
+        val eventDate = Date(
+            abs(eventData.daysCount.toLong() * 24 * 60 * 60 * 1000) + date.time
+        )
 
         Box(
             Modifier
@@ -245,15 +252,19 @@ fun ProgressCard(
 
             // event date
             Box(Modifier.matchParentSize(), contentAlignment = Alignment.BottomStart) {
-                Text(SimpleDateFormat("dd.MM.yyyy").format(eventDate), style = MaterialTheme.typography.bodySmall)
+                Text(
+                    SimpleDateFormat("dd.MM.yyyy").format(eventDate),
+                    style = MaterialTheme.typography.bodySmall
+                )
             }
 
             // days/months before
             if (!complete) {
+                val ctx = LocalContext.current
                 val text = when {
-                    daysDiff <= 30 -> "$daysDiff days"
-                    daysDiff <= 365 -> "~ ${daysDiff / 30} months"
-                    else -> "~ ${daysDiff / 365} years"
+                    daysDiff <= 30 -> ctx.getString(R.string.days_left) + " $daysDiff"
+                    daysDiff <= 365 -> ctx.getString(R.string.months_left) + " ${daysDiff / 30}"
+                    else -> ctx.getString(R.string.years_left) + " ${daysDiff / 365}"
                 }
                 Box(Modifier.matchParentSize(), contentAlignment = Alignment.BottomEnd) {
                     Text(text, style = MaterialTheme.typography.bodySmall)

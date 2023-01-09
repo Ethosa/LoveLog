@@ -2,8 +2,7 @@ package com.avocat.lovelog.ui.composable
 
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.border
-import androidx.compose.foundation.layout.height
-import androidx.compose.foundation.layout.width
+import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.runtime.Composable
@@ -27,8 +26,7 @@ fun Avatar(
             ImageVector.vectorResource(R.drawable.ic_loveloglighticon),
             null,
             modifier
-                .height(96.dp)
-                .width(96.dp)
+                .size(96.dp)
                 .clip(CircleShape)
                 .border(4.dp, MaterialTheme.colorScheme.background, CircleShape),
             contentScale = ContentScale.Crop
@@ -38,8 +36,7 @@ fun Avatar(
             imageBitmap,
             null,
             modifier
-                .height(96.dp)
-                .width(96.dp)
+                .size(96.dp)
                 .clip(CircleShape)
                 .border(4.dp, MaterialTheme.colorScheme.background, CircleShape),
             contentScale = ContentScale.Crop

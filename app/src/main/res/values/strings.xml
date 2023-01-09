@@ -12,4 +12,10 @@
     <string name="enter_password">Enter password</string>
     <string name="repeat_pass">Repeat the password</string>
     <string name="set_pass_text">What would be your password?</string>
+    <string name="wrong_pass">Password isn\'t correct</string>
+    <string name="pass_dont_match">Passwords don\'t match</string>
+    <string name="days_left">days left:</string>
+    <string name="months_left">months left: ~</string>
+    <string name="years_left">years left:~</string>
+    <string name="date_starting">Dating date</string>
 </resources>

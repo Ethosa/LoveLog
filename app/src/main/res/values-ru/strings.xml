@@ -12,4 +12,10 @@
     <string name="enter_password">Введите пароль</string>
     <string name="repeat_pass">Повторите пароль</string>
     <string name="set_pass_text">Придумайте пароль</string>
+    <string name="wrong_pass">Пароль неправильный</string>
+    <string name="pass_dont_match">Пароли не совпадают</string>
+    <string name="days_left">дней:</string>
+    <string name="months_left">месяцев: ~</string>
+    <string name="years_left">лет: ~</string>
+    <string name="date_starting">Дата начала отношений</string>
 </resources>

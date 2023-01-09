@@ -24,6 +24,7 @@ import androidx.compose.ui.graphics.ImageBitmap
 import com.avocat.lovelog.R
 import com.avocat.lovelog.Utils
 import com.avocat.lovelog.ui.composable.Avatar
+import com.avocat.lovelog.ui.composable.DatePickerField
 import com.avocat.lovelog.ui.theme.LAccent
 
 
@@ -50,6 +51,16 @@ fun SettingsScreen(navController: NavController, preferences: SharedPreferences)
     val pass = remember { mutableStateOf(
         preferences.getString(Utils.PASSWORD, "")!!
     ) }
+
+    val date = remember { mutableStateOf(
+        preferences.getString(Utils.COUPLE_DATE, "")!!
+    ) }
+
+
+    val modifierH8 = Modifier.height(8.dp)
+    val modifierH36 = Modifier.height(36.dp)
+    val modifierW128 = Modifier.width(128.dp)
+    val modifierW256 = Modifier.width(256.dp)
 
     Surface(
         Modifier.fillMaxSize(),
@@ -79,6 +90,7 @@ fun SettingsScreen(navController: NavController, preferences: SharedPreferences)
                         .putString(Utils.RIGHT_PARTNER, newRightName.value.text)
                         .putString(Utils.RIGHT_AVATAR, newRightPhoto.value)
                         .putString(Utils.LEFT_AVATAR, newLeftPhoto.value)
+                        .putString(Utils.COUPLE_DATE, date.value)
                         .apply()
                     navController.navigateUp()
                 }) {
@@ -99,29 +111,44 @@ fun SettingsScreen(navController: NavController, preferences: SharedPreferences)
                 style = MaterialTheme.typography.titleSmall,
                 modifier = Modifier.padding(2.dp, 4.dp)
             )
-            Divider(Modifier.width(128.dp))
+            Divider(modifierW128)
             // Names and avatars
-            Spacer(Modifier.height(8.dp))
+            Spacer(modifierH8)
             Text(LocalContext.current.getString(R.string.main_title))
-            Divider(Modifier.width(256.dp))
-            Spacer(Modifier.height(24.dp))
+            Divider(modifierW256)
+            Spacer(modifierH36)
             Row(
                 verticalAlignment = Alignment.CenterVertically
             ) {
-                AvatarChanger(nameToChange = newLeftName, avatarToChange = newLeftPhoto)
+                AvatarChanger(
+                    modifierW128, newLeftName, newLeftPhoto
+                )
                 Icon(
                     Icons.Outlined.Favorite,
                     "heart",
                     tint = LAccent,
                     modifier = Modifier.scale(2f)
                 )
-                AvatarChanger(nameToChange = newRightName, avatarToChange = newRightPhoto)
+                AvatarChanger(
+                    modifierW128, newRightName, newRightPhoto
+                )
             }
-            Spacer(Modifier.height(24.dp))
+            Spacer(modifierH8)
+            Text(
+                    LocalContext.current.getString(R.string.date_starting),
+                    style = MaterialTheme.typography.bodyLarge
+                )
+            DatePickerField(
+                Modifier.width(196.dp),
+                onEdit = { date.value = it }
+            ) {
+                    date.value = it
+            }
+            Spacer(modifierH36)
             // Security
             Text(LocalContext.current.getString(R.string.security_title))
-            Divider(Modifier.width(256.dp))
-            Spacer(Modifier.height(24.dp))
+            Divider(modifierW256)
+            Spacer(modifierH36)
             Button(onClick = {
                 navController.navigate("passwordSetScreen")
             }) {
@@ -156,19 +183,21 @@ fun AvatarChanger(
             )
         }
     }
+    // Load avatar image
+    val img: ImageBitmap? = Utils.uriToImageBitmap(
+        Uri.parse(avatarToChange.value), LocalContext.current.contentResolver
+    )
 
     Column(
         modifier.wrapContentSize(),
         horizontalAlignment = Alignment.CenterHorizontally
     ) {
-        // Load avatar image
-        val img: ImageBitmap? = Utils.uriToImageBitmap(
-            Uri.parse(avatarToChange.value), LocalContext.current.applicationContext.contentResolver
-        )
         Avatar(
-            Modifier.size(64.dp).clickable {
-                pickPicture.launch(arrayOf("image/*"))
-            },
+            Modifier
+                .size(64.dp)
+                .clickable {
+                    pickPicture.launch(arrayOf("image/*"))
+                },
             img
         )
         TextField(
