@@ -19,8 +19,10 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
 import androidx.compose.ui.draw.scale
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
+import com.avocat.lovelog.R
 import com.avocat.lovelog.Utils
 import com.avocat.lovelog.ui.theme.LAccent
 import com.avocat.lovelog.ui.theme.LFore
@@ -34,7 +36,8 @@ fun PasswordScreen(
     navController: NavController,
     preferences: SharedPreferences,
     isSet: Boolean = false,
-    isRemember: Boolean = false
+    isRemember: Boolean = false,
+    isClear: Boolean = false
 ) {
     val alpha = remember { Animatable(0f) }
     val offsetY = remember { Animatable(0f) }
@@ -60,7 +63,7 @@ fun PasswordScreen(
     }
     LaunchedEffect(key1 = true) {
         delay(500)
-        offsetY.animateTo(-256f, tween(500, easing = EaseOutBack))
+        offsetY.animateTo(-200f, tween(500, easing = EaseOutBack))
     }
 
     Surface(
@@ -102,7 +105,17 @@ fun PasswordScreen(
                     }
                 }
             }
-            Spacer(Modifier.height(16.dp))
+            Spacer(Modifier.height(24.dp))
+            Text(
+                when {
+                    isClear -> LocalContext.current.getString(R.string.enter_password)
+                    isRemember -> LocalContext.current.getString(R.string.repeat_pass)
+                    isSet -> LocalContext.current.getString(R.string.set_pass_text)
+                    else -> LocalContext.current.getString(R.string.enter_password)
+                },
+                style = MaterialTheme.typography.bodyMedium
+            )
+            Spacer(Modifier.height(12.dp))
             Text(
                 error,
                 modifier = Modifier.alpha(errorTextAlpha),
@@ -157,21 +170,36 @@ fun PasswordScreen(
                 item {
                     IconButton(onClick = {
                         if (isSet) {
+                            // Set password
                             navController.popBackStack()
                             navController.navigate("passwordRememberScreen")
                             preferences.edit().putString(Utils.PASSWORD2REM, password).apply()
                         } else if (isRemember) {
+                            // Repeat the password
                             if (pass2rem != password) {
                                 error = "passwords don't match"
 
                             } else {
-                                preferences.edit().putString(Utils.PASSWORD2REM, null).apply()
-                                preferences.edit().putString(Utils.PASSWORD, password).apply()
+                                preferences.edit()
+                                    .putString(Utils.PASSWORD2REM, null)
+                                    .putString(Utils.PASSWORD, password)
+                                    .apply()
                                 navController.navigateUp()
                             }
+                        } else if (isClear) {
+                            // Clear password
+                            if (oldPassword != password)
+                                error = "password isn't correct"
+                            preferences.edit()
+                                .putString(Utils.PASSWORD2REM, null)
+                                .putString(Utils.PASSWORD, null)
+                                .apply()
+                            navController.navigateUp()
                         } else if (oldPassword != password) {
+                            // Incorrect password
                             error = "password isn't correct"
                         } else {
+                            // Valid password
                             navController.popBackStack()
                             navController.navigate("mainScreen")
                         }

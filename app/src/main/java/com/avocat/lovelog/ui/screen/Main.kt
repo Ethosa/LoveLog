@@ -2,6 +2,7 @@ package com.avocat.lovelog.ui.screen
 
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import android.net.Uri
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.background
@@ -38,6 +39,7 @@ import androidx.navigation.NavController
 import com.avocat.lovelog.EventData
 import com.avocat.lovelog.R
 import com.avocat.lovelog.Utils
+import com.avocat.lovelog.ui.composable.Avatar
 import com.avocat.lovelog.ui.icon.Heart
 import com.avocat.lovelog.ui.theme.LAccent
 import java.text.SimpleDateFormat
@@ -92,6 +94,7 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                 .alpha(alpha.value)
         ) {
             val (leftPartner, rightPartner) = Utils.getCouple(preferences)
+            val (leftPhoto, rightPhoto) = Utils.getCouplePhotos(preferences)
 
             // Partners and main info
             Row(
@@ -100,8 +103,12 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                 horizontalArrangement = Arrangement.Center
             ) {
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Avatar(Modifier)
-                    Text(leftPartner)
+                    Avatar(
+                        imageBitmap = Utils.uriToImageBitmap(
+                            Uri.parse(leftPhoto), LocalContext.current.applicationContext.contentResolver
+                        )
+                    )
+                    Text(leftPartner, style = MaterialTheme.typography.bodyMedium)
                 }
                 Column(
                     Modifier
@@ -133,8 +140,12 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                     )
                 }
                 Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Avatar(Modifier)
-                    Text(rightPartner)
+                    Avatar(
+                        imageBitmap = Utils.uriToImageBitmap(
+                            Uri.parse(rightPhoto), LocalContext.current.applicationContext.contentResolver
+                        )
+                    )
+                    Text(rightPartner, style = MaterialTheme.typography.bodyMedium)
                 }
             }
 
@@ -250,17 +261,4 @@ fun ProgressCard(
             }
         }
     }
-}
-
-
-@Composable
-fun Avatar(modifier: Modifier) {
-    Image(
-        ImageVector.vectorResource(R.drawable.ic_loveloglighticon),
-        null,
-        modifier
-            .height(96.dp)
-            .clip(CircleShape)
-            .border(4.dp, MaterialTheme.colorScheme.background, CircleShape)
-    )
 }

@@ -4,4 +4,12 @@
     <string name="contn">продолжить</string>
     <string name="day_together">-й день вместе</string>
     <string name="settings">Настройки</string>
+    <string name="name">Имя</string>
+    <string name="set_pass">установить пароль</string>
+    <string name="security_title">Безопасность</string>
+    <string name="main_title">Главное</string>
+    <string name="clear_pass">убрать пароль</string>
+    <string name="enter_password">Введите пароль</string>
+    <string name="repeat_pass">Повторите пароль</string>
+    <string name="set_pass_text">Придумайте пароль</string>
 </resources>

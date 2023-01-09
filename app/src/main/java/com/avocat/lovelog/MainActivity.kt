@@ -1,16 +1,25 @@
 package com.avocat.lovelog
 
+import android.Manifest
 import android.annotation.SuppressLint
 import android.content.SharedPreferences
+import android.content.pm.PackageManager
 import android.os.Build
 import android.os.Bundle
 import android.view.WindowInsets
 import android.view.WindowInsetsController
 import android.view.WindowManager
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.runtime.SideEffect
+import androidx.compose.runtime.mutableStateOf
+import androidx.compose.runtime.remember
+import androidx.compose.ui.platform.LocalContext
+import androidx.core.content.ContextCompat
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
 import androidx.core.view.WindowCompat
 import androidx.navigation.compose.NavHost
@@ -52,7 +61,26 @@ class MainActivity : ComponentActivity() {
             startDestination = "passwordScreen"
         }
 
+
         setContent {
+            val ctx = LocalContext.current
+            val permissionGranted = remember { mutableStateOf(
+                ContextCompat.checkSelfPermission(
+                    ctx, Manifest.permission.READ_EXTERNAL_STORAGE
+                ) == PackageManager.PERMISSION_GRANTED
+            ) }
+
+            val permissionLauncher = rememberLauncherForActivityResult(
+                ActivityResultContracts.RequestPermission()
+            ) {
+                permissionGranted.value = it
+            }
+
+            SideEffect {
+                if (!permissionGranted.value)
+                    permissionLauncher.launch(Manifest.permission.READ_EXTERNAL_STORAGE)
+            }
+
             val navController = rememberNavController()
             navController.visibleEntries
 
@@ -95,6 +123,11 @@ class MainActivity : ComponentActivity() {
                         composable("passwordRememberScreen") {
                             EnterAnimation {
                                 PasswordScreen(navController, sharedPreferences, isRemember = true)
+                            }
+                        }
+                        composable("passwordClearScreen") {
+                            EnterAnimation {
+                                PasswordScreen(navController, sharedPreferences, isClear = true)
                             }
                         }
                     }

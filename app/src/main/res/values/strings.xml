@@ -4,4 +4,12 @@
     <string name="contn">continue</string>
     <string name="day_together">days together</string>
     <string name="settings">Settings</string>
+    <string name="name">Name</string>
+    <string name="set_pass">set password</string>
+    <string name="security_title">Security</string>
+    <string name="main_title">Main</string>
+    <string name="clear_pass">clear password</string>
+    <string name="enter_password">Enter password</string>
+    <string name="repeat_pass">Repeat the password</string>
+    <string name="set_pass_text">What would be your password?</string>
 </resources>
