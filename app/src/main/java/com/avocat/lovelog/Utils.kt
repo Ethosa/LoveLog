@@ -2,19 +2,14 @@ package com.avocat.lovelog
 
 import android.annotation.SuppressLint
 import android.content.ContentResolver
-import android.content.Context
-import android.content.Intent
 import android.content.SharedPreferences
-import android.graphics.Bitmap
 import android.graphics.BitmapFactory
 import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
-import androidx.compose.runtime.Composable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
-import androidx.core.graphics.decodeBitmap
 import java.lang.Exception
 import java.text.SimpleDateFormat
 import java.util.Date

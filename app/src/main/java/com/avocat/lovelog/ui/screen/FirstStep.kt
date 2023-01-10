@@ -1,9 +1,7 @@
 package com.avocat.lovelog.ui.screen
 
-import android.app.DatePickerDialog
 import android.content.SharedPreferences
 import android.icu.util.Calendar
-import android.widget.DatePicker
 import androidx.compose.animation.core.*
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.Button
@@ -28,12 +26,6 @@ fun FirstStepScreen(navController: NavController, preferences: SharedPreferences
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
     var date by remember { mutableStateOf("$day.$month.$year") }
-
-    val picker = DatePickerDialog(
-        LocalContext.current,
-        { _: DatePicker, y: Int, m: Int, d: Int -> date = "$d.${m+1}.$y" },
-        year, month, day
-    )
 
     // Animations
     val alpha = remember { Animatable(0f) }

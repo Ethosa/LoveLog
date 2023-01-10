@@ -67,7 +67,6 @@ fun DatePickerField(
                     return@TextField
                 index = if (it.selection.start > 0) it.selection.start-1 else 0
                 val isLonger = it.text.length > date.text.length
-                val char = if (it.text.isNotEmpty()) it.text[index] else '\r'
                 date = when {
                     formattedDate[index] == '#' -> it
                     isLonger -> TextFieldValue(

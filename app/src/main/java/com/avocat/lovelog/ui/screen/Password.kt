@@ -25,10 +25,7 @@ import androidx.navigation.NavController
 import com.avocat.lovelog.R
 import com.avocat.lovelog.Utils
 import com.avocat.lovelog.ui.theme.LAccent
-import com.avocat.lovelog.ui.theme.LFore
-import kotlinx.coroutines.coroutineScope
 import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
 
 
 @Composable

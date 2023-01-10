@@ -2,7 +2,6 @@ package com.avocat.lovelog.ui.icon
 
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.materialIcon
-import androidx.compose.material.icons.materialPath
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.SolidColor
 import androidx.compose.ui.graphics.StrokeCap
@@ -11,12 +10,12 @@ import androidx.compose.ui.graphics.vector.DefaultFillType
 import androidx.compose.ui.graphics.vector.ImageVector
 import androidx.compose.ui.graphics.vector.path
 
-public val Icons.Outlined.Heart: ImageVector
+val Icons.Outlined.Heart: ImageVector
     get() {
-        if (_favorite != null) {
-            return _favorite!!
+        if (_heart != null) {
+            return _heart!!
         }
-        _favorite = materialIcon(name = "Outlined.Favorite") {
+        _heart = materialIcon(name = "Outlined.Favorite") {
             path(
                 fill = SolidColor(Color.Black),
                 fillAlpha = 0f,
@@ -41,7 +40,7 @@ public val Icons.Outlined.Heart: ImageVector
                 close()
             }
         }
-        return _favorite!!
+        return _heart!!
     }
 
-private var _favorite: ImageVector? = null
+private var _heart: ImageVector? = null
