@@ -17,9 +17,11 @@ import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.platform.LocalContext
 import androidx.core.content.ContextCompat
+import androidx.navigation.NavType
 import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
+import androidx.navigation.navArgument
 import com.avocat.lovelog.ui.EnterAnimation
 import com.avocat.lovelog.ui.SlideUpAnimation
 import com.avocat.lovelog.ui.screen.*
@@ -103,24 +105,36 @@ class MainActivity : ComponentActivity() {
                                 SettingsScreen(navController, sharedPreferences)
                             }
                         }
-                        composable("passwordScreen") {
+                        composable(
+                            "passwordScreen?isSet={set}&isRemember={rem}&isClear={clear}&isReset={reset}",
+                            arguments = listOf(
+                                navArgument("set") {
+                                    defaultValue = false
+                                    type = NavType.BoolType
+                                },
+                                navArgument("rem") {
+                                    defaultValue = false
+                                    type = NavType.BoolType
+                                },
+                                navArgument("clear") {
+                                    defaultValue = false
+                                    type = NavType.BoolType
+                                },
+                                navArgument("reset") {
+                                    defaultValue = false
+                                    type = NavType.BoolType
+                                },
+                            )
+                        ) {
                             EnterAnimation {
-                                PasswordScreen(navController, sharedPreferences)
-                            }
-                        }
-                        composable("passwordSetScreen") {
-                            EnterAnimation {
-                                PasswordScreen(navController, sharedPreferences, isSet = true)
-                            }
-                        }
-                        composable("passwordRememberScreen") {
-                            EnterAnimation {
-                                PasswordScreen(navController, sharedPreferences, isRemember = true)
-                            }
-                        }
-                        composable("passwordClearScreen") {
-                            EnterAnimation {
-                                PasswordScreen(navController, sharedPreferences, isClear = true)
+                                PasswordScreen(
+                                    navController,
+                                    sharedPreferences,
+                                    isSet = it.arguments?.getBoolean("set")!!,
+                                    isClear = it.arguments?.getBoolean("clear")!!,
+                                    isRemember = it.arguments?.getBoolean("rem")!!,
+                                    isReset = it.arguments?.getBoolean("reset")!!,
+                                )
                             }
                         }
                     }

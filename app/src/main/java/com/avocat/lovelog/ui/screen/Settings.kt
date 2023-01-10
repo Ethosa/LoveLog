@@ -153,13 +153,16 @@ fun SettingsScreen(navController: NavController, preferences: SharedPreferences)
             Divider(modifierW256)
             Spacer(modifierH36)
             Button(onClick = {
-                navController.navigate("passwordSetScreen")
+                if (pass.value.isEmpty())
+                    navController.navigate("passwordScreen?isSet=true")
+                else
+                    navController.navigate("passwordScreen?isReset=true")
             }) {
                 Text(LocalContext.current.getString(R.string.set_pass))
             }
             if (pass.value.isNotEmpty())
                 Button(onClick = {
-                    navController.navigate("passwordClearScreen")
+                    navController.navigate("passwordScreen?isClear=true")
                 }) {
                     Text(LocalContext.current.getString(R.string.clear_pass))
                 }

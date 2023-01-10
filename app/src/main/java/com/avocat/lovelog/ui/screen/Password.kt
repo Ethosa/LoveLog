@@ -34,7 +34,8 @@ fun PasswordScreen(
     preferences: SharedPreferences,
     isSet: Boolean = false,
     isRemember: Boolean = false,
-    isClear: Boolean = false
+    isClear: Boolean = false,
+    isReset: Boolean = false
 ) {
     val alpha = remember { Animatable(0f) }
     val offsetY = remember { Animatable(0f) }
@@ -105,7 +106,7 @@ fun PasswordScreen(
             Spacer(Modifier.height(24.dp))
             Text(
                 when {
-                    isClear -> LocalContext.current.getString(R.string.enter_password)
+                    isClear || isReset -> LocalContext.current.getString(R.string.enter_password)
                     isRemember -> LocalContext.current.getString(R.string.repeat_pass)
                     isSet -> LocalContext.current.getString(R.string.set_pass_text)
                     else -> LocalContext.current.getString(R.string.enter_password)
@@ -168,7 +169,7 @@ fun PasswordScreen(
                         if (isSet) {
                             // Set password
                             navController.popBackStack()
-                            navController.navigate("passwordRememberScreen")
+                            navController.navigate("passwordScreen?isRemember=true")
                             preferences.edit().putString(Utils.PASSWORD2REM, password).apply()
                         } else if (isRemember) {
                             // Repeat the password
@@ -190,6 +191,15 @@ fun PasswordScreen(
                                 .putString(Utils.PASSWORD, null)
                                 .apply()
                             navController.navigateUp()
+                        } else if (isReset) {
+                            // Set a new password (works when password isn't empty)
+                            if (oldPassword != password) {
+                                error = ctx.getString(R.string.wrong_pass)
+                            } else {
+                                // Valid password
+                                navController.popBackStack()
+                                navController.navigate("passwordScreen?isSet=true")
+                            }
                         } else if (oldPassword != password) {
                             // Incorrect password
                             error = ctx.getString(R.string.wrong_pass)
