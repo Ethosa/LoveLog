@@ -3,8 +3,12 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/git_projects/LoveLog/app/src/main/res/drawable/ic_loveloglighticon.xml" value="0.1005" />
+        <entry key="..\:/git_projects/LoveLog/app/src/main/res/drawable/ic_loveloglighticonmonochrome.xml" value="0.1005" />
+        <entry key="..\:/git_projects/LoveLog/app/src/main/res/drawable/ic_lovelogmonochromeicon.xml" value="0.1" />
         <entry key="..\:/git_projects/LoveLog/app/src/main/res/drawable/ic_union.xml" value="0.1005" />
         <entry key="..\:/git_projects/LoveLog/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml" value="0.1005" />
+        <entry key="..\:/git_projects/LoveLog/app/src/main/res/mipmap-anydpi-v26/ic_launcher_round.xml" value="0.1005" />
       </map>
     </option>
   </component>

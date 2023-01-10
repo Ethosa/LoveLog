@@ -123,12 +123,14 @@ fun SettingsScreen(navController: NavController, preferences: SharedPreferences)
                 AvatarChanger(
                     modifierW128, newLeftName, newLeftPhoto
                 )
+                Spacer(Modifier.width(16.dp))
                 Icon(
                     Icons.Outlined.Favorite,
                     "heart",
                     tint = LAccent,
                     modifier = Modifier.scale(2f)
                 )
+                Spacer(Modifier.width(16.dp))
                 AvatarChanger(
                     modifierW128, newRightName, newRightPhoto
                 )
@@ -140,6 +142,7 @@ fun SettingsScreen(navController: NavController, preferences: SharedPreferences)
                 )
             DatePickerField(
                 Modifier.width(196.dp),
+                initDate = date.value,
                 onEdit = { date.value = it }
             ) {
                     date.value = it

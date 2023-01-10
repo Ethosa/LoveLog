@@ -23,22 +23,25 @@ import androidx.compose.ui.unit.dp
 @Composable
 fun DatePickerField(
     modifier: Modifier = Modifier,
+    initDate: String? = null,
+    formattedDate: String = "##.##.####",
     onEdit: (date: String) -> Unit = {},
     onPick: (date: String) -> Unit = {}
 ) {
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
-    val month = calendar.get(Calendar.MONTH) + 1
+    val month = calendar.get(Calendar.MONTH)
     val day = calendar.get(Calendar.DAY_OF_MONTH)
 
     val years = year.toString().padStart(4, '0')
     val months = (month+1).toString().padStart(2, '0')
     val days = day.toString().padStart(2, '0')
 
-    var date by remember { mutableStateOf(TextFieldValue("$days.$months.$years")) }
+    var date by remember { mutableStateOf(TextFieldValue(
+        initDate ?: "$days.$months.$years"
+    )) }
     var index by remember { mutableStateOf(0) }
     var isError by remember { mutableStateOf(false) }
-    val formattedDate = "##.##.####"
 
     val datePickerDialog = DatePickerDialog(
         LocalContext.current,
@@ -65,11 +68,10 @@ fun DatePickerField(
                 index = if (it.selection.start > 0) it.selection.start-1 else 0
                 val isLonger = it.text.length > date.text.length
                 val char = if (it.text.isNotEmpty()) it.text[index] else '\r'
-                val fchar = formattedDate[index]
                 date = when {
-                    fchar == '#' -> it
+                    formattedDate[index] == '#' -> it
                     isLonger -> TextFieldValue(
-                        it.text + fchar,
+                        it.text + formattedDate[index],
                         selection = TextRange(it.selection.start + 1, it.selection.end + 1)
                     )
                     else -> it
