@@ -7,12 +7,15 @@
 ![Jetpack Compose badge](https://img.shields.io/badge/-Jetpack%20Compose-336cb3?logo=jetpack%20compose&logoColor=2cac6d&style=for-the-badge)
 ![Wakatime stats](https://wakatime.com/badge/github/Ethosa/LoveLog.svg?style=for-the-badge)
 
+![Min Android version badge](https://img.shields.io/badge/-Android%207.0%20or%20above-336cb3?logo=android&logoColor=2cac6d&style=for-the-badge)
+
 </div>
 
 ## Features
-- [x] Security
+- [x] Security (pin code)
 - [ ] Comfortable design
 - [ ] Flexible
+- [x] Material You support (include monochrome icons)
 
 <div align="right">
 
