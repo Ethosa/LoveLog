@@ -27,6 +27,9 @@ class Utils {
         const val PASSWORD2REM = "Password2Rem"
 
         @SuppressLint("SimpleDateFormat")
+        val dateFormat = SimpleDateFormat("dd.MM.yyyy")
+
+        @SuppressLint("SimpleDateFormat")
         fun getDate(preferences: SharedPreferences): Date? {
             val date = preferences.getString(COUPLE_DATE, null)
             var result: Date? = null

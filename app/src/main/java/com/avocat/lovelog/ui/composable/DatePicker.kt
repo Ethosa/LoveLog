@@ -28,6 +28,7 @@ fun DatePickerField(
     onEdit: (date: String) -> Unit = {},
     onPick: (date: String) -> Unit = {}
 ) {
+    // Get current date
     val calendar = Calendar.getInstance()
     val year = calendar.get(Calendar.YEAR)
     val month = calendar.get(Calendar.MONTH)
@@ -37,6 +38,7 @@ fun DatePickerField(
     val months = (month+1).toString().padStart(2, '0')
     val days = day.toString().padStart(2, '0')
 
+    // Write current date as string
     var date by remember { mutableStateOf(TextFieldValue(
         initDate ?: "$days.$months.$years"
     )) }

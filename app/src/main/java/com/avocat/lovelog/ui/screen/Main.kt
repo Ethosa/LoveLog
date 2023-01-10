@@ -1,6 +1,5 @@
 package com.avocat.lovelog.ui.screen
 
-import android.annotation.SuppressLint
 import android.content.SharedPreferences
 import android.net.Uri
 import androidx.compose.animation.core.*
@@ -10,8 +9,8 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
-import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.outlined.ArrowRightAlt
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
@@ -29,12 +28,13 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import com.avocat.lovelog.EventData
+import com.avocat.lovelog.Events
 import com.avocat.lovelog.R
 import com.avocat.lovelog.Utils
 import com.avocat.lovelog.ui.composable.Avatar
 import com.avocat.lovelog.ui.icon.Heart
 import com.avocat.lovelog.ui.theme.LAccent
-import java.text.SimpleDateFormat
+import com.avocat.lovelog.ui.theme.UpRoundedCornerShape24
 import java.util.*
 import kotlin.math.abs
 
@@ -60,7 +60,7 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
     println(months)
     println(days)
 
-    val i = listOf(
+    val i = Events(
         EventData("100 days", 100),
         EventData("200 days", 200),
         EventData("300 days", 300),
@@ -76,17 +76,15 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
         EventData("6 years",  2190),
     )
     // Visible item calculating
-    var nextIndex = 0
-    while (nextIndex < i.size-1 && i[nextIndex+1].daysCount <= allDays) {
-        nextIndex++
-    }
-    val lazyState = rememberLazyListState(nextIndex)
+    val lazyState = rememberLazyListState(i.lastCompletedIndex(allDays.toInt()))
+
+    val lastDate = i.lastDate(allDays.toInt())
+    val nextDate = i.nextDate(allDays.toInt())
 
     val (leftPartner, rightPartner) = Utils.getCouple(preferences)
     val (leftPhoto, rightPhoto) = Utils.getCouplePhotos(preferences)
 
-    // Main content
-    Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
+    Surface(Modifier.fillMaxSize()) {
         // Gradient
         Box(
             Modifier
@@ -102,12 +100,13 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
             modifierAlpha
                 .fillMaxSize()
                 .offset(0.dp, (80f + offsetY.value).dp),
-            shape = RoundedCornerShape(24.dp, 24.dp, 0.dp, 0.dp),
+            shape = UpRoundedCornerShape24,
             color = MaterialTheme.colorScheme.background
         ) { }
         Column(
             modifierAlpha
-                .offset(0.dp, (36f + offsetY.value).dp)
+                .offset(0.dp, (36f + offsetY.value).dp),
+            horizontalAlignment = Alignment.CenterHorizontally
         ) {
 
             // Partners and main info
@@ -148,7 +147,7 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                     }
                     Text(date, style = MaterialTheme.typography.bodySmall)
                     Text(
-                        allDays.toString() + " " + LocalContext.current.getString(R.string.day_together),
+                        allDays.toString() + LocalContext.current.getString(R.string.day_together),
                         style = MaterialTheme.typography.labelSmall
                     )
                 }
@@ -164,6 +163,32 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
             }
 
             // Progress
+            Spacer(Modifier.height(8.dp))
+            Row(verticalAlignment = Alignment.CenterVertically) {
+                Box(contentAlignment = Alignment.Center) {
+                    val progress = when {
+                        nextDate == null -> 1f
+                        nextDate.daysCount - allDays == 0L -> 0f
+                        else -> (nextDate.daysCount - allDays).toFloat() /
+                                (nextDate.daysCount - lastDate.daysCount).toFloat()
+                    }
+                    CircularProgressIndicator(progress, Modifier.size(46.dp))
+                    Text(
+                        "${(progress * 100).toInt()}%",
+                        style = MaterialTheme.typography.bodySmall
+                    )
+                }
+                Spacer(Modifier.width(8.dp))
+                Text(lastDate.title, style = MaterialTheme.typography.bodyMedium)
+                nextDate?.let {
+                    Icon(
+                        Icons.Outlined.ArrowRightAlt,
+                        "arrow",
+                        tint = MaterialTheme.colorScheme.inversePrimary
+                    )
+                    Text(nextDate.title, style = MaterialTheme.typography.bodyMedium)
+                }
+            }
 
             // Cards
             Column(
@@ -177,12 +202,12 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                     state = lazyState,
                     horizontalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    items(i) {
+                    items(i.list) {
                         ProgressCard(
                             complete = allDays >= it.daysCount,
                             eventData = it,
                             currentDays = allDays.toInt(),
-                            coupleDate = date
+                            coupleDate = Utils.dateFormat.parse(date)!!
                         )
                     }
                 }
@@ -209,14 +234,13 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
 }
 
 
-@SuppressLint("SimpleDateFormat")
 @Composable
 fun ProgressCard(
     modifier: Modifier = Modifier,
     complete: Boolean = false,
     eventData: EventData = EventData("", 0),
     currentDays: Int = 0,
-    coupleDate: String,
+    coupleDate: Date,
 ) {
     Surface(
         modifier.padding(12.dp, 4.dp),
@@ -227,10 +251,9 @@ fun ProgressCard(
                 MaterialTheme.colorScheme.inversePrimary,
         shape = MaterialTheme.shapes.medium
     ) {
-        val date = SimpleDateFormat("dd.MM.yyyy").parse(coupleDate)!!
         val daysDiff = abs(currentDays - eventData.daysCount)
         val eventDate = Date(
-            abs(eventData.daysCount.toLong() * 24 * 60 * 60 * 1000) + date.time
+            abs(eventData.daysCount.toLong() * 24 * 60 * 60 * 1000) + coupleDate.time
         )
 
         Box(
@@ -245,7 +268,7 @@ fun ProgressCard(
             // event date
             Box(Modifier.matchParentSize(), contentAlignment = Alignment.BottomStart) {
                 Text(
-                    SimpleDateFormat("dd.MM.yyyy").format(eventDate),
+                    Utils.dateFormat.format(eventDate),
                     style = MaterialTheme.typography.bodySmall
                 )
             }
