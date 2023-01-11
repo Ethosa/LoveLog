@@ -17,6 +17,7 @@
 - [ ] Comfortable design
 - [ ] Flexible
 - [x] Material You support (include monochrome icons)
+- Multilanguage (English/Russian support)
 
 |![Screenshot_20230110_082030](https://user-images.githubusercontent.com/49402667/211440511-a7c7b3ef-62d0-4127-9ac5-8651bf8d86da.png)|![Screenshot_20230110_081853](https://user-images.githubusercontent.com/49402667/211440578-aaecba87-67a4-4e29-abcb-310733b3d7a2.png)|![Screenshot_20230110_082040](https://user-images.githubusercontent.com/49402667/211440593-aea30928-1da3-4319-acbd-75014a2d35d5.png)|
 |:---:|:---:|:---:|
