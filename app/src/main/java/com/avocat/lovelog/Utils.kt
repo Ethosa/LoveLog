@@ -30,7 +30,7 @@ class Utils {
         val dateFormat = SimpleDateFormat("dd.MM.yyyy")
 
         /**
-         *
+         * Loads saved dating date if available
          */
         fun getDate(preferences: SharedPreferences): Date? {
             val date = preferences.getString(COUPLE_DATE, null)
@@ -41,18 +41,28 @@ class Utils {
             return result
         }
 
+        /**
+         * Loads saved partners names
+         */
         fun getCouple(preferences: SharedPreferences): List<String> {
             val left = preferences.getString(LEFT_PARTNER, "")!!
             val right = preferences.getString(RIGHT_PARTNER, "")!!
             return listOf(left, right)
         }
 
+        /**
+         * Loads saved partners photos
+         */
         fun getCouplePhotos(preferences: SharedPreferences): List<String> {
             val left = preferences.getString(LEFT_AVATAR, "")!!
             val right = preferences.getString(RIGHT_AVATAR, "")!!
             return listOf(left, right)
         }
 
+        /**
+         * Calculates period between specified date and now date (without leap years)
+         * @param date - specified date
+         */
         fun getPeriod(date: String): List<Long> {
             val start: Date = dateFormat.parse(date)!!
             val end = Date()
@@ -63,6 +73,9 @@ class Utils {
             return listOf(years, months % 12, (days % 365) % 30, days)
         }
 
+        /**
+         * Loads ImageBitmap from Uri
+         */
         fun uriToImageBitmap(uri: Uri, contentResolver: ContentResolver): ImageBitmap? {
             if (uri.toString().isEmpty())
                 return null

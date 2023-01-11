@@ -27,8 +27,7 @@ fun Avatar(
             null,
             modifier
                 .size(96.dp)
-                .clip(CircleShape)
-                .border(4.dp, MaterialTheme.colorScheme.background, CircleShape),
+                .clip(CircleShape),
             contentScale = ContentScale.Crop
         )
     } else {
@@ -37,8 +36,7 @@ fun Avatar(
             null,
             modifier
                 .size(96.dp)
-                .clip(CircleShape)
-                .border(4.dp, MaterialTheme.colorScheme.background, CircleShape),
+                .clip(CircleShape),
             contentScale = ContentScale.Crop
         )
     }

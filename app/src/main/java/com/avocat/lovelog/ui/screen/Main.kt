@@ -2,9 +2,7 @@ package com.avocat.lovelog.ui.screen
 
 import android.content.SharedPreferences
 import android.net.Uri
-import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
-import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.items
@@ -15,13 +13,8 @@ import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
-import androidx.compose.ui.draw.alpha
-import androidx.compose.ui.graphics.Brush
-import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.graphics.ColorFilter
 import androidx.compose.ui.layout.ContentScale
 import androidx.compose.ui.platform.LocalContext
@@ -32,7 +25,6 @@ import com.avocat.lovelog.Events
 import com.avocat.lovelog.R
 import com.avocat.lovelog.Utils
 import com.avocat.lovelog.ui.composable.Avatar
-import com.avocat.lovelog.ui.icon.Heart
 import com.avocat.lovelog.ui.theme.LAccent
 import com.avocat.lovelog.ui.theme.UpRoundedCornerShape24
 import java.util.*
@@ -106,13 +98,6 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                 verticalArrangement = Arrangement.Center
             ) {
                 Box(Modifier.wrapContentSize(), contentAlignment = Alignment.Center) {
-                    Image(
-                        Icons.Outlined.Heart,
-                        "heart",
-                        Modifier.height(40.dp),
-                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
-                        contentScale = ContentScale.FillHeight
-                    )
                     Image(
                         Icons.Outlined.Favorite,
                         "heart",

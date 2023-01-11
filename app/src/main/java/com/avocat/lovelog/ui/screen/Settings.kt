@@ -30,7 +30,6 @@ import com.avocat.lovelog.ui.theme.LAccent
 
 @Composable
 fun SettingsScreen(navController: NavController, preferences: SharedPreferences) {
-
     // Names
     val newLeftName = remember { mutableStateOf(
         TextFieldValue(preferences.getString(Utils.LEFT_PARTNER, "")!!
