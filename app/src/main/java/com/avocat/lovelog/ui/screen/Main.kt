@@ -44,16 +44,6 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
     val date = preferences.getString(Utils.COUPLE_DATE, "")
 
     // Animations
-    val offsetY = remember { Animatable(256f) }
-    val alpha = remember { Animatable(0f) }
-    val modifierAlpha = Modifier.alpha(alpha.value)
-
-    LaunchedEffect(key1 = true) {
-        offsetY.animateTo(0f, tween(500, 300, EaseOutBack))
-    }
-    LaunchedEffect(key1 = true) {
-        alpha.animateTo(1f, tween(300, 300, EaseOutBack))
-    }
 
     val (years, months, days, allDays) = Utils.getPeriod(date!!)
     println(years)
@@ -84,149 +74,134 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
     val (leftPartner, rightPartner) = Utils.getCouple(preferences)
     val (leftPhoto, rightPhoto) = Utils.getCouplePhotos(preferences)
 
-    Surface(Modifier.fillMaxSize()) {
-        // Gradient
-        Box(
-            Modifier
-                .background(
-                    brush = Brush.horizontalGradient(
-                        listOf(Color(0xFFFF9EF5), Color(0xFF8C9FFF))
+    // Background
+    Surface(
+        Modifier.fillMaxSize(),
+        shape = UpRoundedCornerShape24,
+        color = MaterialTheme.colorScheme.background
+    ) { }
+    Column(
+        Modifier.offset(0.dp, 36.dp),
+        horizontalAlignment = Alignment.CenterHorizontally
+    ) {
+
+        // Partners and main info
+        Row(
+            Modifier.fillMaxWidth(),
+            verticalAlignment = Alignment.Top,
+            horizontalArrangement = Arrangement.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Avatar(
+                    imageBitmap = Utils.uriToImageBitmap(
+                        Uri.parse(leftPhoto), LocalContext.current.contentResolver
                     )
                 )
-                .fillMaxWidth()
-        )
-        // Background
-        Surface(
-            modifierAlpha
-                .fillMaxSize()
-                .offset(0.dp, (80f + offsetY.value).dp),
-            shape = UpRoundedCornerShape24,
-            color = MaterialTheme.colorScheme.background
-        ) { }
-        Column(
-            modifierAlpha
-                .offset(0.dp, (36f + offsetY.value).dp),
-            horizontalAlignment = Alignment.CenterHorizontally
-        ) {
-
-            // Partners and main info
-            Row(
-                Modifier.fillMaxWidth(),
-                verticalAlignment = Alignment.Top,
-                horizontalArrangement = Arrangement.Center
-            ) {
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Avatar(
-                        imageBitmap = Utils.uriToImageBitmap(
-                            Uri.parse(leftPhoto), LocalContext.current.contentResolver
-                        )
-                    )
-                    Text(leftPartner, style = MaterialTheme.typography.bodyMedium)
-                }
-                Column(
-                    modifierAlpha
-                        .offset(0.dp, 24.dp),
-                    horizontalAlignment = Alignment.CenterHorizontally,
-                    verticalArrangement = Arrangement.Center
-                ) {
-                    Box(Modifier.wrapContentSize(), contentAlignment = Alignment.Center) {
-                        Image(
-                            Icons.Outlined.Heart,
-                            "heart",
-                            Modifier.height(40.dp),
-                            colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
-                            contentScale = ContentScale.FillHeight
-                        )
-                        Image(
-                            Icons.Outlined.Favorite,
-                            "heart",
-                            Modifier.height(40.dp),
-                            colorFilter = ColorFilter.tint(LAccent),
-                            contentScale = ContentScale.FillHeight
-                        )
-                    }
-                    Text(date, style = MaterialTheme.typography.bodySmall)
-                    Text(
-                        allDays.toString() + LocalContext.current.getString(R.string.day_together),
-                        style = MaterialTheme.typography.labelSmall
-                    )
-                }
-                Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                    Avatar(
-                        imageBitmap = Utils.uriToImageBitmap(
-                            Uri.parse(rightPhoto),
-                            LocalContext.current.contentResolver
-                        )
-                    )
-                    Text(rightPartner, style = MaterialTheme.typography.bodyMedium)
-                }
+                Text(leftPartner, style = MaterialTheme.typography.bodyMedium)
             }
-
-            // Progress
-            Spacer(Modifier.height(8.dp))
-            Row(verticalAlignment = Alignment.CenterVertically) {
-                Box(contentAlignment = Alignment.Center) {
-                    val progress = when {
-                        nextDate == null -> 1f
-                        nextDate.daysCount - allDays == 0L -> 0f
-                        else -> (nextDate.daysCount - allDays).toFloat() /
-                                (nextDate.daysCount - lastDate.daysCount).toFloat()
-                    }
-                    CircularProgressIndicator(progress, Modifier.size(46.dp))
-                    Text(
-                        "${(progress * 100).toInt()}%",
-                        style = MaterialTheme.typography.bodySmall
-                    )
-                }
-                Spacer(Modifier.width(8.dp))
-                Text(lastDate.title, style = MaterialTheme.typography.bodyMedium)
-                nextDate?.let {
-                    Icon(
-                        Icons.Outlined.ArrowRightAlt,
-                        "arrow",
-                        tint = MaterialTheme.colorScheme.inversePrimary
-                    )
-                    Text(nextDate.title, style = MaterialTheme.typography.bodyMedium)
-                }
-            }
-
-            // Cards
             Column(
                 Modifier
-                    .fillMaxSize()
-                    .offset(0.dp, (-48).dp),
-                verticalArrangement = Arrangement.Bottom,
-                horizontalAlignment = Alignment.CenterHorizontally
+                    .offset(0.dp, 24.dp),
+                horizontalAlignment = Alignment.CenterHorizontally,
+                verticalArrangement = Arrangement.Center
             ) {
-                LazyRow(
-                    state = lazyState,
-                    horizontalArrangement = Arrangement.spacedBy(16.dp)
-                ) {
-                    items(i.list) {
-                        ProgressCard(
-                            complete = allDays >= it.daysCount,
-                            eventData = it,
-                            currentDays = allDays.toInt(),
-                            coupleDate = Utils.dateFormat.parse(date)!!
-                        )
-                    }
+                Box(Modifier.wrapContentSize(), contentAlignment = Alignment.Center) {
+                    Image(
+                        Icons.Outlined.Heart,
+                        "heart",
+                        Modifier.height(40.dp),
+                        colorFilter = ColorFilter.tint(MaterialTheme.colorScheme.background),
+                        contentScale = ContentScale.FillHeight
+                    )
+                    Image(
+                        Icons.Outlined.Favorite,
+                        "heart",
+                        Modifier.height(40.dp),
+                        colorFilter = ColorFilter.tint(LAccent),
+                        contentScale = ContentScale.FillHeight
+                    )
                 }
-                Spacer(Modifier.height(4.dp))
-                Row(
-                    Modifier.fillMaxWidth(),
-                    horizontalArrangement = Arrangement.SpaceAround
-                ) {
-                    IconButton(
-                        onClick = {
-                            navController.navigate("settingsScreen")
-                        }
-                    ) {
-                        Icon(
-                            Icons.Outlined.Settings,
-                            "settings",
-                            tint = MaterialTheme.colorScheme.primary
-                        )
+                Text(date, style = MaterialTheme.typography.bodySmall)
+                Text(
+                    allDays.toString() + LocalContext.current.getString(R.string.day_together),
+                    style = MaterialTheme.typography.labelSmall
+                )
+            }
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                Avatar(
+                    imageBitmap = Utils.uriToImageBitmap(
+                        Uri.parse(rightPhoto),
+                        LocalContext.current.contentResolver
+                    )
+                )
+                Text(rightPartner, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+
+        // Progress
+        Spacer(Modifier.height(8.dp))
+        Row(verticalAlignment = Alignment.CenterVertically) {
+            Box(contentAlignment = Alignment.Center) {
+                val progress = when {
+                    nextDate == null -> 1f
+                    nextDate.daysCount - allDays == 0L -> 0f
+                    else -> (nextDate.daysCount - allDays).toFloat() /
+                            (nextDate.daysCount - lastDate.daysCount).toFloat()
+                }
+                CircularProgressIndicator(progress, Modifier.size(46.dp))
+                Text(
+                    "${(progress * 100).toInt()}%",
+                    style = MaterialTheme.typography.bodySmall
+                )
+            }
+            Spacer(Modifier.width(8.dp))
+            Text(lastDate.title, style = MaterialTheme.typography.bodyMedium)
+            nextDate?.let {
+                Icon(
+                    Icons.Outlined.ArrowRightAlt,
+                    "arrow",
+                    tint = MaterialTheme.colorScheme.inversePrimary
+                )
+                Text(nextDate.title, style = MaterialTheme.typography.bodyMedium)
+            }
+        }
+
+        // Cards
+        Column(
+            Modifier
+                .fillMaxSize()
+                .offset(0.dp, (-48).dp),
+            verticalArrangement = Arrangement.Bottom,
+            horizontalAlignment = Alignment.CenterHorizontally
+        ) {
+            LazyRow(
+                state = lazyState,
+                horizontalArrangement = Arrangement.spacedBy(16.dp)
+            ) {
+                items(i.list) {
+                    ProgressCard(
+                        complete = allDays >= it.daysCount,
+                        eventData = it,
+                        currentDays = allDays.toInt(),
+                        coupleDate = Utils.dateFormat.parse(date)!!
+                    )
+                }
+            }
+            Spacer(Modifier.height(4.dp))
+            Row(
+                Modifier.fillMaxWidth(),
+                horizontalArrangement = Arrangement.SpaceAround
+            ) {
+                IconButton(
+                    onClick = {
+                        navController.navigate("settingsScreen")
                     }
+                ) {
+                    Icon(
+                        Icons.Outlined.Settings,
+                        "settings",
+                        tint = MaterialTheme.colorScheme.primary
+                    )
                 }
             }
         }

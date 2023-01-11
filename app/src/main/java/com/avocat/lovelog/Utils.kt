@@ -29,12 +29,14 @@ class Utils {
         @SuppressLint("SimpleDateFormat")
         val dateFormat = SimpleDateFormat("dd.MM.yyyy")
 
-        @SuppressLint("SimpleDateFormat")
+        /**
+         *
+         */
         fun getDate(preferences: SharedPreferences): Date? {
             val date = preferences.getString(COUPLE_DATE, null)
             var result: Date? = null
             date?.let {
-                result = SimpleDateFormat("dd.MM.yyyy").parse(date)!!
+                result = dateFormat.parse(date)!!
             }
             return result
         }
@@ -51,9 +53,8 @@ class Utils {
             return listOf(left, right)
         }
 
-        @SuppressLint("SimpleDateFormat")
         fun getPeriod(date: String): List<Long> {
-            val start: Date = SimpleDateFormat("dd.MM.yyyy").parse(date)!!
+            val start: Date = dateFormat.parse(date)!!
             val end = Date()
             val diff = abs(end.time - start.time)
             val days = diff / 1000 / 60 / 60 / 24

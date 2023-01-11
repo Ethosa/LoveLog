@@ -35,7 +35,8 @@ fun PasswordScreen(
     isSet: Boolean = false,
     isRemember: Boolean = false,
     isClear: Boolean = false,
-    isReset: Boolean = false
+    isReset: Boolean = false,
+    passwordLength: Int = 4
 ) {
     val alpha = remember { Animatable(0f) }
     val offsetY = remember { Animatable(0f) }
@@ -43,7 +44,6 @@ fun PasswordScreen(
     val oldPassword = preferences.getString(Utils.PASSWORD, "")
     val pass2rem = preferences.getString(Utils.PASSWORD2REM, "")
     var password by remember { mutableStateOf("") }
-    val passLength = 4
 
     val ctx = LocalContext.current
 
@@ -83,7 +83,7 @@ fun PasswordScreen(
             Row(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                for (i in 1..passLength) {
+                for (i in 1..passwordLength) {
                     if (i <= password.length) {
                         Box(
                             Modifier
@@ -133,7 +133,7 @@ fun PasswordScreen(
                 // numbers
                 items(('1'..'9').toList()) {
                     IconButton(onClick = {
-                        if (passLength > password.length) {
+                        if (passwordLength > password.length) {
                             password += it
                             error = ""
                         }
@@ -155,7 +155,7 @@ fun PasswordScreen(
                 // zero
                 item {
                     IconButton(onClick = {
-                        if (passLength > password.length) {
+                        if (passwordLength > password.length) {
                             password += "0"
                             error = ""
                         }
@@ -167,12 +167,12 @@ fun PasswordScreen(
                 item {
                     IconButton(onClick = {
                         if (isSet) {
-                            // Set password
+                            // Set a new password
                             navController.popBackStack()
                             navController.navigate("passwordScreen?isRemember=true")
                             preferences.edit().putString(Utils.PASSWORD2REM, password).apply()
                         } else if (isRemember) {
-                            // Repeat the password
+                            // Repeat the new password
                             if (pass2rem != password) {
                                 error = ctx.getString(R.string.pass_dont_match)
                             } else {
@@ -183,7 +183,7 @@ fun PasswordScreen(
                                 navController.navigateUp()
                             }
                         } else if (isClear) {
-                            // Clear password
+                            // Clear old password
                             if (oldPassword != password)
                                 error = ctx.getString(R.string.wrong_pass)
                             preferences.edit()
