@@ -55,6 +55,14 @@ fun PasswordScreen(
         }
     }
 
+    val circleModifier = Modifier.size(24.dp)
+    val borderCircleModifier = circleModifier.border(
+        2.dp, MaterialTheme.colorScheme.onBackground, CircleShape
+    )
+    val backCircleModifier = circleModifier.background(
+        MaterialTheme.colorScheme.onBackground, CircleShape
+    )
+
     LaunchedEffect(key1 = true) {
         delay(1000)
         alpha.animateTo(1.5f, tween(500, 0, EaseOut))
@@ -85,21 +93,9 @@ fun PasswordScreen(
             ) {
                 for (i in 1..passwordLength) {
                     if (i <= password.length) {
-                        Box(
-                            Modifier
-                                .background(
-                                    MaterialTheme.colorScheme.onBackground, CircleShape
-                                )
-                                .size(24.dp)
-                        )
+                        Box(backCircleModifier)
                     } else {
-                        Box(
-                            Modifier
-                                .border(
-                                    2.dp, MaterialTheme.colorScheme.onBackground, CircleShape
-                                )
-                                .size(24.dp)
-                        )
+                        Box(borderCircleModifier)
                     }
                 }
             }

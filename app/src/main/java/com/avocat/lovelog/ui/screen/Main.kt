@@ -92,8 +92,7 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                 Text(leftPartner, style = MaterialTheme.typography.bodyMedium)
             }
             Column(
-                Modifier
-                    .offset(0.dp, 24.dp),
+                Modifier.offset(0.dp, 24.dp),
                 horizontalAlignment = Alignment.CenterHorizontally,
                 verticalArrangement = Arrangement.Center
             ) {

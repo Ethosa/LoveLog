@@ -20,6 +20,8 @@ import androidx.compose.ui.text.input.TextFieldValue
 import androidx.compose.ui.unit.dp
 import androidx.navigation.NavController
 import android.net.Uri
+import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.ui.draw.clip
 import androidx.compose.ui.graphics.ImageBitmap
 import com.avocat.lovelog.R
 import com.avocat.lovelog.Utils
@@ -177,15 +179,16 @@ fun AvatarChanger(
     nameToChange: MutableState<TextFieldValue>,
     avatarToChange: MutableState<String>,
 ) {
-    val ctx = LocalContext.current.applicationContext
+    val ctx = LocalContext.current
     val pickPicture = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.OpenDocument()
     ) {
         it?.let {
-            avatarToChange.value = it.toString()
             ctx.contentResolver.takePersistableUriPermission(
-                it, (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
+                it,
+                (Intent.FLAG_GRANT_READ_URI_PERMISSION or Intent.FLAG_GRANT_WRITE_URI_PERMISSION)
             )
+            avatarToChange.value = it.toString()
         }
     }
     // Load avatar image
@@ -200,6 +203,7 @@ fun AvatarChanger(
         Avatar(
             Modifier
                 .size(64.dp)
+                .clip(CircleShape)
                 .clickable {
                     pickPicture.launch(arrayOf("image/*"))
                 },

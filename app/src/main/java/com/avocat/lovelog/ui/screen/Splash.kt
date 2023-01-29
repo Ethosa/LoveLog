@@ -1,10 +1,7 @@
 package com.avocat.lovelog.ui.screen
 
 import android.content.SharedPreferences
-import androidx.compose.animation.core.Animatable
-import androidx.compose.animation.core.EaseInBack
-import androidx.compose.animation.core.EaseOutBack
-import androidx.compose.animation.core.tween
+import androidx.compose.animation.core.*
 import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
@@ -28,14 +25,29 @@ import kotlinx.coroutines.delay
 @Composable
 fun SplashScreen(navController: NavController, preferences: SharedPreferences) {
     // Animations
-    val scale = remember { Animatable(.2f) }
-    val offsetY = remember { Animatable(256f) }
+    val scale = remember { Animatable(.4f) }
+    val offsetY = remember { Animatable(128f) }
     val alpha = remember { Animatable(0f) }
 
+    // Scale
     LaunchedEffect(key1 = true) {
-        scale.animateTo(.5f, tween(500, easing = EaseOutBack, delayMillis = 300))
-        delay(500)
-        scale.animateTo(.2f, tween(500, easing = EaseInBack))
+        scale.animateTo(.5f, tween(500, easing = EaseInExpo, delayMillis = 300))
+        delay(800)
+        scale.animateTo(.4f, tween(500, easing = EaseOutExpo))
+    }
+
+    // Alpha
+    LaunchedEffect(key1 = true) {
+        alpha.animateTo(1f, tween(500, easing = EaseInExpo, delayMillis = 300))
+        delay(800)
+        alpha.animateTo(0f, tween(500, easing = EaseOutExpo))
+    }
+
+    // Offset
+    LaunchedEffect(key1 = true) {
+        offsetY.animateTo(0f, tween(500, easing = EaseInExpo, delayMillis = 300))
+        delay(800)
+        offsetY.animateTo(-128f, tween(500, easing = EaseOutExpo))
         delay(500)
         val date = Utils.getDate(preferences)
         val password = preferences.getString(Utils.PASSWORD, null)
@@ -45,18 +57,6 @@ fun SplashScreen(navController: NavController, preferences: SharedPreferences) {
             password != null -> navController.navigate("passwordScreen")
             else -> navController.navigate("mainScreen")
         }
-    }
-
-    LaunchedEffect(key1 = true) {
-        offsetY.animateTo(0f, tween(500, easing = EaseOutBack, delayMillis = 300))
-        delay(500)
-        offsetY.animateTo(-256f, tween(500, easing = EaseInBack))
-    }
-
-    LaunchedEffect(key1 = true) {
-        alpha.animateTo(1f, tween(500, easing = EaseOutBack, delayMillis = 300))
-        delay(500)
-        alpha.animateTo(0f, tween(500, easing = EaseInBack))
     }
 
     Box(
