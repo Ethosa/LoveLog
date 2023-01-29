@@ -28,6 +28,7 @@ import com.avocat.lovelog.ui.theme.LAccent
 import kotlinx.coroutines.delay
 
 
+@Stable
 @Composable
 fun PasswordScreen(
     navController: NavController,
@@ -55,7 +56,7 @@ fun PasswordScreen(
         }
     }
 
-    val circleModifier = Modifier.size(24.dp)
+    val circleModifier by remember { mutableStateOf(Modifier.size(24.dp)) }
     val borderCircleModifier = circleModifier.border(
         2.dp, MaterialTheme.colorScheme.onBackground, CircleShape
     )
@@ -92,11 +93,10 @@ fun PasswordScreen(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
                 for (i in 1..passwordLength) {
-                    if (i <= password.length) {
+                    if (i <= password.length)
                         Box(backCircleModifier)
-                    } else {
+                    else
                         Box(borderCircleModifier)
-                    }
                 }
             }
             Spacer(Modifier.height(24.dp))
@@ -159,7 +159,7 @@ fun PasswordScreen(
                         Text("0")
                     }
                 }
-                // Complete
+                // Done
                 item {
                     IconButton(onClick = {
                         if (isSet) {

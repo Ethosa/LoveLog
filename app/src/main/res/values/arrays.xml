@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <integer-array name="dates_num">
+        <item>100</item>
+        <item>200</item>
+        <item>300</item>
+        <item>365</item>
+        <item>400</item>
+        <item>500</item>
+        <item>600</item>
+        <item>700</item>
+        <item>730</item>
+        <item>800</item>
+        <item>900</item>
+        <item>1000</item>
+        <item>1095</item>
+        <item>1460</item>
+        <item>1500</item>
+        <item>1825</item>
+        <item>2000</item>
+        <item>2190</item>
+        <item>2500</item>
+        <item>2555</item>
+    </integer-array>
+    <string-array name="dates">
+        <item>100 days</item>
+        <item>200 days</item>
+        <item>300 days</item>
+        <item>1 year</item>
+        <item>400 days</item>
+        <item>500 days</item>
+        <item>600 days</item>
+        <item>700 days</item>
+        <item>2 years</item>
+        <item>800 days</item>
+        <item>900 days</item>
+        <item>1000 days</item>
+        <item>3 years</item>
+        <item>4 years</item>
+        <item>1500 days</item>
+        <item>5 years</item>
+        <item>2000 days</item>
+        <item>6 years</item>
+        <item>2500 days</item>
+        <item>7 years</item>
+    </string-array>
+</resources>

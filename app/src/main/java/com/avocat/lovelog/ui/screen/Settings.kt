@@ -30,6 +30,7 @@ import com.avocat.lovelog.ui.composable.DatePickerField
 import com.avocat.lovelog.ui.theme.LAccent
 
 
+@Stable
 @Composable
 fun SettingsScreen(navController: NavController, preferences: SharedPreferences) {
     // Names
@@ -173,6 +174,7 @@ fun SettingsScreen(navController: NavController, preferences: SharedPreferences)
 
 
 @OptIn(ExperimentalMaterial3Api::class)
+@Stable
 @Composable
 fun AvatarChanger(
     modifier: Modifier = Modifier,

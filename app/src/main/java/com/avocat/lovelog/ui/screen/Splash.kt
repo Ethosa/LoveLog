@@ -8,6 +8,7 @@ import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.Stable
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
@@ -22,12 +23,16 @@ import com.avocat.lovelog.Utils
 import kotlinx.coroutines.delay
 
 
+@Stable
 @Composable
 fun SplashScreen(navController: NavController, preferences: SharedPreferences) {
     // Animations
     val scale = remember { Animatable(.4f) }
     val offsetY = remember { Animatable(128f) }
     val alpha = remember { Animatable(0f) }
+
+    val date = Utils.getDate(preferences)
+    val password = preferences.getString(Utils.PASSWORD, null)
 
     // Scale
     LaunchedEffect(key1 = true) {
@@ -49,8 +54,6 @@ fun SplashScreen(navController: NavController, preferences: SharedPreferences) {
         delay(800)
         offsetY.animateTo(-128f, tween(500, easing = EaseOutExpo))
         delay(500)
-        val date = Utils.getDate(preferences)
-        val password = preferences.getString(Utils.PASSWORD, null)
         navController.popBackStack()
         when {
             date == null -> navController.navigate("firstStepScreen")
@@ -60,9 +63,16 @@ fun SplashScreen(navController: NavController, preferences: SharedPreferences) {
     }
 
     Box(
-        Modifier.fillMaxSize().offset(0.dp, offsetY.value.dp).scale(scale.value).alpha(alpha.value),
+        Modifier
+            .fillMaxSize()
+            .offset(0.dp, offsetY.value.dp)
+            .scale(scale.value)
+            .alpha(alpha.value),
         contentAlignment = Alignment.Center
     ) {
-        Image(ImageVector.vectorResource(id = R.drawable.ic_loveloglighticon), null)
+        Image(
+            ImageVector.vectorResource(id = R.drawable.ic_loveloglighticon),
+            "Logo"
+        )
     }
 }

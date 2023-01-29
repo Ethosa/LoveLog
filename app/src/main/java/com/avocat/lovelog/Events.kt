@@ -1,16 +1,21 @@
 package com.avocat.lovelog
 
+import androidx.compose.runtime.Stable
 
+
+@Stable
 class Events(
-    private vararg val eventData: EventData
+    vararg eventData: EventData
 ) {
+    private val events = eventData.toMutableList()
+
     /**
      * Returns index of last completed date.
      * @param days days count
      */
     fun lastCompletedIndex(days: Int): Int {
         var i = 0
-        while (i < eventData.size-2 && eventData[i+1].daysCount <= days) i++
+        while (i < events.size-2 && events[i+1].daysCount <= days) i++
         return i
     }
 
@@ -19,7 +24,7 @@ class Events(
      * @param days days count
      */
     fun lastDate(days: Int): EventData {
-        return eventData[lastCompletedIndex(days)]
+        return events[lastCompletedIndex(days)]
     }
 
     /**
@@ -28,11 +33,17 @@ class Events(
      */
     fun nextDate(days: Int): EventData? {
         val i = lastCompletedIndex(days)
-        return if (i < eventData.size-1)
-                eventData[i+1]
+        return if (i < events.size-1)
+            events[i+1]
             else
                 null
     }
 
-    val list = eventData.toList()
+    fun list(): List<EventData> {
+        return events.toList()
+    }
+
+    fun addEvent(event: EventData) {
+        events.add(event)
+    }
 }

@@ -18,6 +18,7 @@ import com.avocat.lovelog.Utils
 import com.avocat.lovelog.ui.composable.DatePickerField
 
 
+@Stable
 @Composable
 fun FirstStepScreen(navController: NavController, preferences: SharedPreferences) {
     val calendar = Calendar.getInstance()
@@ -38,10 +39,15 @@ fun FirstStepScreen(navController: NavController, preferences: SharedPreferences
         offsetTitleY.animateTo(0f, tween(1000, 300, EaseOut))
     }
 
-    Box(Modifier.fillMaxSize().alpha(alpha.value), contentAlignment = Alignment.Center) {
+    Box(
+        Modifier
+            .fillMaxSize()
+            .alpha(alpha.value),
+        contentAlignment = Alignment.Center
+    ) {
         Text(
             LocalContext.current.getString(R.string.start_dating),
-            Modifier.offset(0.dp, (-48 - offsetTitleY.value).dp)
+            Modifier.offset(0.dp, (-48f - offsetTitleY.value).dp)
         )
         DatePickerField(onEdit = {
             date = it
@@ -54,7 +60,9 @@ fun FirstStepScreen(navController: NavController, preferences: SharedPreferences
     Box(
         Modifier
             .fillMaxSize()
-            .padding(12.dp), contentAlignment = Alignment.BottomEnd) {
+            .padding(12.dp),
+        contentAlignment = Alignment.BottomEnd
+    ) {
         Button(onClick = {
             preferences.edit().putString(Utils.COUPLE_DATE, date).apply()
             navController.popBackStack()

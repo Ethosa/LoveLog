@@ -13,6 +13,7 @@ import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
 import androidx.compose.runtime.Composable
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -31,32 +32,19 @@ import java.util.*
 import kotlin.math.abs
 
 
+@Stable
 @Composable
 fun MainScreen(navController: NavController, preferences: SharedPreferences) {
     val date = preferences.getString(Utils.COUPLE_DATE, "")
 
-    // Animations
+    // years, months, days, allDays
+    val (_, _, _, allDays) = Utils.getPeriod(date!!)
 
-    val (years, months, days, allDays) = Utils.getPeriod(date!!)
-    println(years)
-    println(months)
-    println(days)
-
-    val i = Events(
-        EventData("100 days", 100),
-        EventData("200 days", 200),
-        EventData("300 days", 300),
-        EventData("1 year", 365),
-        EventData("400 days", 400),
-        EventData("500 days", 500),
-        EventData("600 days", 600),
-        EventData("2 years", 730),
-        EventData("1000 days", 1000),
-        EventData("3 years", 1095),
-        EventData("4 years", 1460),
-        EventData("5 years", 1825),
-        EventData("6 years",  2190),
-    )
+    val datesNum = LocalContext.current.resources.getIntArray(R.array.dates_num)
+    val dates = LocalContext.current.resources.getStringArray(R.array.dates)
+    val i = Events()
+    for (j in dates.indices)
+        i.addEvent(EventData(dates[j], datesNum[j]))
     // Visible item calculating
     val lazyState = rememberLazyListState(i.lastCompletedIndex(allDays.toInt()))
 
@@ -162,7 +150,7 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                 state = lazyState,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(i.list) {
+                items(i.list()) {
                     ProgressCard(
                         complete = allDays >= it.daysCount,
                         eventData = it,
