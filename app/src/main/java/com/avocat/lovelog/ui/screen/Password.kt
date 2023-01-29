@@ -5,9 +5,11 @@ import androidx.compose.animation.core.*
 import androidx.compose.foundation.background
 import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
+import androidx.compose.foundation.lazy.LazyRow
 import androidx.compose.foundation.lazy.grid.GridCells
 import androidx.compose.foundation.lazy.grid.LazyVerticalGrid
 import androidx.compose.foundation.lazy.grid.items
+import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.outlined.Backspace
@@ -42,17 +44,17 @@ fun PasswordScreen(
     val alpha = remember { Animatable(0f) }
     val offsetY = remember { Animatable(0f) }
 
-    val oldPassword = preferences.getString(Utils.PASSWORD, "")
-    val pass2rem = preferences.getString(Utils.PASSWORD2REM, "")
-    var password by remember { mutableStateOf("") }
+    val oldPassword by remember { mutableStateOf(preferences.getString(Utils.PASSWORD, "")) }
+    val pass2rem by remember { mutableStateOf(preferences.getString(Utils.PASSWORD2REM, "")) }
+    val password = remember { mutableStateOf("") }
 
     val ctx = LocalContext.current
 
     // Error
-    var error by remember { mutableStateOf("") }
-    val errorTextAlpha by animateFloatAsState(if (error.isEmpty()) 0f else 1f) {
+    val error = remember { mutableStateOf("") }
+    val errorTextAlpha by animateFloatAsState(if (error.value.isEmpty()) 0f else 1f) {
         if (it != 0f) {
-            password = ""
+            password.value = ""
         }
     }
 
@@ -64,6 +66,9 @@ fun PasswordScreen(
         MaterialTheme.colorScheme.onBackground, CircleShape
     )
 
+    val one2nine by remember { mutableStateOf(('1'..'9').toList()) }
+    val passLen by remember { mutableStateOf((1 .. passwordLength).toList()) }
+
     LaunchedEffect(key1 = true) {
         delay(1000)
         alpha.animateTo(1.5f, tween(500, 0, EaseOut))
@@ -72,6 +77,10 @@ fun PasswordScreen(
         delay(500)
         offsetY.animateTo(-200f, tween(500, easing = EaseOutBack))
     }
+
+    val lazyColumns by remember { mutableStateOf(GridCells.Fixed(3)) }
+    val lazyModifier by remember { mutableStateOf(Modifier.offset(0.dp, 64.dp)) }
+    val lazyVerticalArrangement by remember { mutableStateOf(Arrangement.spacedBy(24.dp)) }
 
     Surface(
         Modifier.fillMaxSize(),
@@ -89,11 +98,11 @@ fun PasswordScreen(
                 modifier = Modifier.scale(3f)
             )
             Spacer(Modifier.height(32.dp))
-            Row(
+            LazyRow(
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                for (i in 1..passwordLength) {
-                    if (i <= password.length)
+                items(passLen) {
+                    if (it <= password.value.length)
                         Box(backCircleModifier)
                     else
                         Box(borderCircleModifier)
@@ -111,7 +120,7 @@ fun PasswordScreen(
             )
             Spacer(Modifier.height(12.dp))
             Text(
-                error,
+                error.value,
                 modifier = Modifier.alpha(errorTextAlpha),
                 color = LAccent,
                 style = MaterialTheme.typography.bodySmall
@@ -122,27 +131,20 @@ fun PasswordScreen(
             contentAlignment = Alignment.Center
         ) {
             LazyVerticalGrid(
-                columns = GridCells.Fixed(3),
-                modifier = Modifier.offset(0.dp, 64.dp),
-                verticalArrangement = Arrangement.spacedBy(24.dp)
+                columns = lazyColumns,
+                modifier = lazyModifier,
+                verticalArrangement = lazyVerticalArrangement
             ) {
                 // numbers
-                items(('1'..'9').toList()) {
-                    IconButton(onClick = {
-                        if (passwordLength > password.length) {
-                            password += it
-                            error = ""
-                        }
-                    }) {
-                        Text(it.toString())
-                    }
+                items(one2nine) {
+                    NumButton(password, error, passwordLength, it)
                 }
                 // Remove last char
                 item {
                     IconButton(onClick = {
-                        if (password.isNotEmpty()) {
-                            password = password.substring(0, password.lastIndex)
-                            error = ""
+                        if (password.value.isNotEmpty()) {
+                            password.value = password.value.substring(0, password.value.lastIndex)
+                            error.value = ""
                         }
                     }) {
                         Icon(Icons.Outlined.Backspace, "remove")
@@ -150,14 +152,7 @@ fun PasswordScreen(
                 }
                 // zero
                 item {
-                    IconButton(onClick = {
-                        if (passwordLength > password.length) {
-                            password += "0"
-                            error = ""
-                        }
-                    }) {
-                        Text("0")
-                    }
+                    NumButton(password, error, passwordLength, '0')
                 }
                 // Done
                 item {
@@ -166,22 +161,22 @@ fun PasswordScreen(
                             // Set a new password
                             navController.popBackStack()
                             navController.navigate("passwordScreen?isRemember=true")
-                            preferences.edit().putString(Utils.PASSWORD2REM, password).apply()
+                            preferences.edit().putString(Utils.PASSWORD2REM, password.value).apply()
                         } else if (isRemember) {
                             // Repeat the new password
-                            if (pass2rem != password) {
-                                error = ctx.getString(R.string.pass_dont_match)
+                            if (pass2rem != password.value) {
+                                error.value = ctx.getString(R.string.pass_dont_match)
                             } else {
                                 preferences.edit()
                                     .putString(Utils.PASSWORD2REM, null)
-                                    .putString(Utils.PASSWORD, password)
+                                    .putString(Utils.PASSWORD, password.value)
                                     .apply()
                                 navController.navigateUp()
                             }
                         } else if (isClear) {
                             // Clear old password
-                            if (oldPassword != password)
-                                error = ctx.getString(R.string.wrong_pass)
+                            if (oldPassword != password.value)
+                                error.value = ctx.getString(R.string.wrong_pass)
                             preferences.edit()
                                 .putString(Utils.PASSWORD2REM, null)
                                 .putString(Utils.PASSWORD, null)
@@ -189,16 +184,16 @@ fun PasswordScreen(
                             navController.navigateUp()
                         } else if (isReset) {
                             // Set a new password (works when password isn't empty)
-                            if (oldPassword != password) {
-                                error = ctx.getString(R.string.wrong_pass)
+                            if (oldPassword != password.value) {
+                                error.value = ctx.getString(R.string.wrong_pass)
                             } else {
                                 // Valid password
                                 navController.popBackStack()
                                 navController.navigate("passwordScreen?isSet=true")
                             }
-                        } else if (oldPassword != password) {
+                        } else if (oldPassword != password.value) {
                             // Incorrect password
-                            error = ctx.getString(R.string.wrong_pass)
+                            error.value = ctx.getString(R.string.wrong_pass)
                         } else {
                             // Valid password
                             navController.popBackStack()
@@ -210,5 +205,23 @@ fun PasswordScreen(
                 }
             }
         }
+    }
+}
+
+@Stable
+@Composable
+fun NumButton(
+    pass: MutableState<String>,
+    error: MutableState<String>,
+    passLen: Int,
+    it: Char
+) {
+    IconButton(onClick = {
+        if (passLen > pass.value.length) {
+            pass.value += it
+            error.value = ""
+        }
+    }) {
+        Text(it.toString())
     }
 }

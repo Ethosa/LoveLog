@@ -12,8 +12,7 @@ import androidx.compose.material.icons.outlined.ArrowRightAlt
 import androidx.compose.material.icons.outlined.Favorite
 import androidx.compose.material.icons.outlined.Settings
 import androidx.compose.material3.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Stable
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.ColorFilter
@@ -42,14 +41,14 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
 
     val datesNum = LocalContext.current.resources.getIntArray(R.array.dates_num)
     val dates = LocalContext.current.resources.getStringArray(R.array.dates)
-    val i = Events()
-    for (j in dates.indices)
-        i.addEvent(EventData(dates[j], datesNum[j]))
+    val events by remember { mutableStateOf(Events()) }
+    for (i in dates.indices)
+        events.addEvent(EventData(dates[i], datesNum[i]))
     // Visible item calculating
-    val lazyState = rememberLazyListState(i.lastCompletedIndex(allDays.toInt()))
+    val lazyState = rememberLazyListState(events.lastCompletedIndex(allDays.toInt()))
 
-    val lastDate = i.lastDate(allDays.toInt())
-    val nextDate = i.nextDate(allDays.toInt())
+    val lastDate = events.lastDate(allDays.toInt())
+    val nextDate = events.nextDate(allDays.toInt())
 
     val (leftPartner, rightPartner) = Utils.getCouple(preferences)
     val (leftPhoto, rightPhoto) = Utils.getCouplePhotos(preferences)
@@ -150,7 +149,7 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
                 state = lazyState,
                 horizontalArrangement = Arrangement.spacedBy(16.dp)
             ) {
-                items(i.list()) {
+                items(events.list()) {
                     ProgressCard(
                         complete = allDays >= it.daysCount,
                         eventData = it,
@@ -181,6 +180,7 @@ fun MainScreen(navController: NavController, preferences: SharedPreferences) {
 }
 
 
+@Stable
 @Composable
 fun ProgressCard(
     modifier: Modifier = Modifier,
@@ -189,6 +189,7 @@ fun ProgressCard(
     currentDays: Int = 0,
     coupleDate: Date,
 ) {
+    val ctx = LocalContext.current
     Surface(
         modifier.padding(12.dp, 4.dp),
         color =
@@ -222,14 +223,15 @@ fun ProgressCard(
 
             // days/months before
             if (!complete) {
-                val ctx = LocalContext.current
-                val text = when {
-                    daysDiff <= 30 -> ctx.getString(R.string.days_left) + " $daysDiff"
-                    daysDiff <= 365 -> ctx.getString(R.string.months_left) + " ${daysDiff / 30}"
-                    else -> ctx.getString(R.string.years_left) + " ${daysDiff / 365}"
-                }
                 Box(Modifier.matchParentSize(), contentAlignment = Alignment.BottomEnd) {
-                    Text(text, style = MaterialTheme.typography.bodySmall)
+                    Text(
+                        when {
+                            daysDiff <= 30 -> ctx.getString(R.string.days_left) + " $daysDiff"
+                            daysDiff <= 365 -> ctx.getString(R.string.months_left) + " ${daysDiff / 30}"
+                            else -> ctx.getString(R.string.years_left) + " ${daysDiff / 365}"
+                        },
+                        style = MaterialTheme.typography.bodySmall
+                    )
                 }
             }
         }

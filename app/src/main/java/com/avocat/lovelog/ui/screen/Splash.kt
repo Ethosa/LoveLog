@@ -6,10 +6,7 @@ import androidx.compose.foundation.Image
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.fillMaxSize
 import androidx.compose.foundation.layout.offset
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.LaunchedEffect
-import androidx.compose.runtime.Stable
-import androidx.compose.runtime.remember
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.draw.alpha
@@ -31,8 +28,8 @@ fun SplashScreen(navController: NavController, preferences: SharedPreferences) {
     val offsetY = remember { Animatable(128f) }
     val alpha = remember { Animatable(0f) }
 
-    val date = Utils.getDate(preferences)
-    val password = preferences.getString(Utils.PASSWORD, null)
+    val date by remember { mutableStateOf(Utils.getDate(preferences)) }
+    val password by remember { mutableStateOf(preferences.getString(Utils.PASSWORD, null)) }
 
     // Scale
     LaunchedEffect(key1 = true) {

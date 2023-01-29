@@ -8,6 +8,7 @@ import android.graphics.ImageDecoder
 import android.net.Uri
 import android.os.Build
 import android.provider.MediaStore
+import androidx.compose.runtime.Stable
 import androidx.compose.ui.graphics.ImageBitmap
 import androidx.compose.ui.graphics.asImageBitmap
 import java.lang.Exception
@@ -16,6 +17,7 @@ import java.util.Date
 import kotlin.math.abs
 
 
+@Stable
 class Utils {
     companion object {
         const val COUPLE_DATE = "CoupleDate"
@@ -45,18 +47,20 @@ class Utils {
          * Loads saved partners names
          */
         fun getCouple(preferences: SharedPreferences): List<String> {
-            val left = preferences.getString(LEFT_PARTNER, "")!!
-            val right = preferences.getString(RIGHT_PARTNER, "")!!
-            return listOf(left, right)
+            return listOf(
+                preferences.getString(LEFT_PARTNER, "")!!,
+                preferences.getString(RIGHT_PARTNER, "")!!
+            )
         }
 
         /**
          * Loads saved partners photos
          */
         fun getCouplePhotos(preferences: SharedPreferences): List<String> {
-            val left = preferences.getString(LEFT_AVATAR, "")!!
-            val right = preferences.getString(RIGHT_AVATAR, "")!!
-            return listOf(left, right)
+            return listOf(
+                preferences.getString(LEFT_AVATAR, "")!!,
+                preferences.getString(RIGHT_AVATAR, "")!!
+            )
         }
 
         /**
